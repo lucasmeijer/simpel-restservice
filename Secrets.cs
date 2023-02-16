@@ -13,7 +13,7 @@ static class Secrets
         if (!string.IsNullOrEmpty(value))
             return value;
             
-        throw new ApplicationException($"The configuration entry {key} has no value"); 
+        throw new ApplicationException($"The configuration entry {key} has no value2"); 
     }
 
     public static void Intialize(ConfigurationManager configurationManager)

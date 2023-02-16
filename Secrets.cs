@@ -1,3 +1,5 @@
+using System.Collections;
+
 static class Secrets
 {
     static ConfigurationManager? _configurationManager;
@@ -12,7 +14,12 @@ static class Secrets
         value = Environment.GetEnvironmentVariable(key);
         if (!string.IsNullOrEmpty(value))
             return value;
-            
+
+        foreach (DictionaryEntry kvp in Environment.GetEnvironmentVariables())
+        {
+            Console.WriteLine($"Key: {kvp.Key} Value={kvp.Value}");
+        }
+        
         throw new ApplicationException($"The configuration entry {key} has no value2"); 
     }
 

@@ -18,9 +18,10 @@ static class Secrets
         foreach (DictionaryEntry kvp in Environment.GetEnvironmentVariables())
         {
             Console.WriteLine($"Key: {kvp.Key} Value={kvp.Value}");
+            Console.Error.WriteLine($"Key: {kvp.Key} Value={kvp.Value}");
         }
         
-        throw new ApplicationException($"The configuration entry {key} has no value2"); 
+        throw new ApplicationException($"The configuration entry {key} has no value3"); 
     }
 
     public static void Intialize(ConfigurationManager configurationManager)

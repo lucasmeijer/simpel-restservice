@@ -1,7 +1,5 @@
 var builder = WebApplication.CreateBuilder(args);
 
-// Load application settings from the configuration provider
-builder.Configuration.AddEnvironmentVariables();
 builder.Services.AddRazorPages();
 builder.Services.AddApplicationInsightsTelemetry();
 

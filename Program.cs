@@ -1,39 +1,34 @@
-using OpenAI.GPT3.Extensions;
-using OpenAI.GPT3.Interfaces;
-using OpenAI.GPT3.ObjectModels;
-
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddOpenAIService();
 
 var app = builder.Build();
-var openAiService = app.Services.GetRequiredService<IOpenAIService>();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
-app.MapGet("/poem", async () =>
+Secrets.Intialize(builder.Configuration);
+
+var openAISummarizer = new OpenAISummarizer();
+var azureOCR = new AzureFormRecognizer();
+
+app.MapPost("/summarize", async (HttpRequest request) =>
 {
-    var completionResult = await openAiService.Completions.CreateCompletion(new()
-    {
-        Prompt = "Once upon a time",
-        Model = Models.TextDavinciV3
-    });
+    var ocrResult = await azureOCR.ImageToText(request.Body);
+    var summary = await openAISummarizer.Summarize(ocrResult);
+    return Results.Text(summary);
+});
 
-    if (completionResult.Successful)
-        return Results.Text(completionResult.Choices.FirstOrDefault()?.Text);
-    
-    if (completionResult.Error == null)
-        throw new Exception("Unknown Error");
+app.MapGet("/exception", () =>
+{
+    throw new ArgumentException("EXCEPTION_TEST_LUCAS");
+});
 
-    return Results.Problem($"{completionResult.Error.Code}: {completionResult.Error.Message}");
+app.MapGet("/notfound", () =>
+{
+    return Results.NotFound();
 });
 
 app.UseHttpsRedirection();

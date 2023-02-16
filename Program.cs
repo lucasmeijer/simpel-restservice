@@ -3,12 +3,13 @@ builder.Services.AddRazorPages();
 builder.Services.AddApplicationInsightsTelemetry();
 
 var app = builder.Build();
+app.UseDeveloperExceptionPage();
 
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Error");
-    app.UseHsts();
-}
+// if (!app.Environment.IsDevelopment())
+// {
+//     app.UseExceptionHandler("/Error");
+//     app.UseHsts();
+//}
 
 Secrets.Intialize(builder.Configuration);
 

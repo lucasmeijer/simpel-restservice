@@ -1,6 +1,6 @@
 static class Secrets
 {
-    private static ConfigurationManager _configurationManager;
+    static ConfigurationManager? _configurationManager;
 
     public static string Get(string key)
     {

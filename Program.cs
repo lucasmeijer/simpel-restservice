@@ -4,9 +4,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRazorPages();
 builder.Services.AddApplicationInsightsTelemetry();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 app.UseDeveloperExceptionPage();
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 // if (!app.Environment.IsDevelopment())
 // {
@@ -19,9 +24,9 @@ Secrets.Intialize(builder.Configuration);
 var openAISummarizer = new OpenAISummarizer();
 var azureOCR = new AzureFormRecognizer();
 
-app.MapPost("/summarize", async (HttpContext context, HttpRequest request) =>
+app.MapPost("/summarize", async (HttpContext context, IFormFile file) =>
 {
-    var ocrResult = await azureOCR.ImageToText(request.Body);
+    var ocrResult = await azureOCR.ImageToText(file.OpenReadStream());
     
     // Write request body to App Insights
     var requestTelemetry = context.Features.Get<RequestTelemetry>();                              

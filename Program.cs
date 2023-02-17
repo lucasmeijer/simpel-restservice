@@ -1,3 +1,5 @@
+using Microsoft.ApplicationInsights.DataContracts;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRazorPages();
@@ -17,9 +19,14 @@ Secrets.Intialize(builder.Configuration);
 var openAISummarizer = new OpenAISummarizer();
 var azureOCR = new AzureFormRecognizer();
 
-app.MapPost("/summarize", async (HttpRequest request) =>
+app.MapPost("/summarize", async (HttpContext context, HttpRequest request) =>
 {
     var ocrResult = await azureOCR.ImageToText(request.Body);
+    
+    // Write request body to App Insights
+    var requestTelemetry = context.Features.Get<RequestTelemetry>();                              
+    requestTelemetry?.Properties.Add("OCRResult", ocrResult);
+    
     var summary = await openAISummarizer.Summarize(ocrResult);
     return Results.Text(summary);
 });
